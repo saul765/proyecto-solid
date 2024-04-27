@@ -15,17 +15,28 @@ public class ProductRepositoryImpl implements IProductRepository {
     }
 
     @Override
-    public void updateProduct(Integer productId, Product product) {
-        products.stream().filter(p -> p.getId().equals(productId)).forEach(p -> {
-            p.setName(product.getName());
-            p.setPrice(product.getPrice());
-            p.setCategory(product.getCategory());
-        });
+    public void updateProduct(Product product) {
+        Product searchProduct = products.stream()
+                .filter(p -> p.getId().equals(product.getId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        boolean isRemoved = products.remove(searchProduct);
+
+        if (!isRemoved) {
+            throw new IllegalArgumentException("Product not found");
+        } else {
+            products.add(product);
+        }
     }
 
     @Override
     public void deleteProduct(Integer productId) {
-        products.removeIf(p -> p.getId().equals(productId));
+        boolean isRemoved = products.removeIf(p -> p.getId().equals(productId));
+
+        if (!isRemoved) {
+            throw new IllegalArgumentException("Product not found");
+        }
     }
 
     @Override

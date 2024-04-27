@@ -19,6 +19,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
         val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
 
         val product = getProduct(productId);
+        productRepository.updateProduct(product);
 
         if (product.getStock() < quantity) {
             throw new RuntimeException("Product out of stock");
@@ -30,12 +31,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
                 .quantity(quantity)
                 .build());
 
-        productRepository.updateProduct(productId, Product.builder()
-                .name(product.getName())
-                .price(product.getPrice())
-                .category(product.getCategory())
-                .stock(product.getStock() - quantity)
-                .build());
+        product.setStock(product.getStock() - quantity);
 
     }
 
@@ -51,12 +47,9 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Product not found in cart"));
 
-        productRepository.updateProduct(productId, Product.builder()
-                .name(stockProduct.getName())
-                .price(stockProduct.getPrice())
-                .category(stockProduct.getCategory())
-                .stock(stockProduct.getStock() + item.getQuantity())
-                .build());
+        stockProduct.setStock(stockProduct.getStock() + item.getQuantity());
+
+        productRepository.updateProduct(stockProduct);
 
         shoppingCart.getProducts().removeIf(cartItem -> cartItem.getProduct().getId().equals(productId));
 
@@ -78,7 +71,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
             throw new RuntimeException("Product out of stock");
         }
 
-        productRepository.updateProduct(productId, Product.builder()
+        productRepository.updateProduct(Product.builder()
                 .name(stockProduct.getName())
                 .price(stockProduct.getPrice())
                 .category(stockProduct.getCategory())

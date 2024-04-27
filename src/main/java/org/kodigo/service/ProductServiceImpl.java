@@ -13,27 +13,28 @@ public class ProductServiceImpl implements IProductService {
 
 
     @Override
-    public void createProduct() {
-
+    public void createProduct(Product product) {
+        productRepository.createProduct(product);
     }
 
     @Override
-    public void updateProduct(Integer productId) {
-
+    public void updateProduct(Product product) {
+        productRepository.updateProduct(product);
     }
+
 
     @Override
     public void deleteProduct(Integer productId) {
-
+        productRepository.deleteProduct(productId);
     }
 
     @Override
     public List<Product> getProducts() {
-        return List.of();
+        return productRepository.getProducts();
     }
 
     @Override
     public List<Product> getProductsByCategory(Integer categoryId) {
-        return List.of();
+        return productRepository.getProductsByCategory(categoryId);
     }
 }

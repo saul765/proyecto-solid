@@ -8,7 +8,7 @@ public interface IProductRepository {
 
     void createProduct(Product product);
 
-    void updateProduct(Integer productId, Product product);
+    void updateProduct(Product product);
 
     void deleteProduct(Integer productId);
 
