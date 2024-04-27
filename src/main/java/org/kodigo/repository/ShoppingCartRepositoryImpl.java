@@ -5,7 +5,6 @@ import org.kodigo.domain.ShoppingCart;
 import org.kodigo.domain.ShoppingCartItem;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class ShoppingCartRepositoryImpl implements IShoppingCartRepository {
 
@@ -19,8 +18,6 @@ public class ShoppingCartRepositoryImpl implements IShoppingCartRepository {
                 .orElseGet(() -> {
                     ShoppingCart newCart = ShoppingCart.builder()
                             .userId(userId)
-                            .products(new ArrayList<>())
-                            .taxes(Collections.emptyList())
                             .build();
                     shoppingCarts.add(newCart);
                     return newCart;
@@ -52,8 +49,6 @@ public class ShoppingCartRepositoryImpl implements IShoppingCartRepository {
                 });
 
     }
-
-
 
 
 }
