@@ -20,7 +20,6 @@ public class ShoppingCart {
 
     private List<Tax> taxes;
 
-    private String userId;
-
+    private Integer userId;
 
 }

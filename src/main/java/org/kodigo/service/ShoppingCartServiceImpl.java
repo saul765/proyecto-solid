@@ -1,30 +1,22 @@
 package org.kodigo.service;
 
+import lombok.AllArgsConstructor;
 import lombok.val;
-import org.kodigo.domain.PlatformService;
 import org.kodigo.domain.Product;
-import org.kodigo.domain.ShoppingCart;
 import org.kodigo.domain.ShoppingCartItem;
 import org.kodigo.repository.IProductRepository;
+import org.kodigo.repository.IShoppingCartRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@AllArgsConstructor
 public class ShoppingCartServiceImpl implements IShoppingCartService {
 
     private final IProductRepository productRepository;
 
-    private final ArrayList<ShoppingCart> shoppingCarts;
-
-    public ShoppingCartServiceImpl(IProductRepository productRepository) {
-        this.productRepository = productRepository;
-        this.shoppingCarts = new ArrayList<>();
-    }
-
+    private final IShoppingCartRepository shoppingCartRepository;
 
     @Override
-    public void addProductToCart(String userId, Integer productId, Integer quantity) {
-        val shoppingCart = getShoppingCart(userId);
+    public void addProductToCart(Integer userId, Integer productId, Integer quantity) {
+        val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
 
         val product = getProduct(productId);
 
@@ -32,8 +24,9 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
             throw new RuntimeException("Product out of stock");
         }
 
-        shoppingCart.getProducts().add(ShoppingCartItem.builder()
-                .productId(productId)
+        shoppingCart.getProducts().add(ShoppingCartItem
+                .builder()
+                .product(product)
                 .quantity(quantity)
                 .build());
 
@@ -47,17 +40,16 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
     }
 
     @Override
-    public void removeProductFromCart(String userId, Integer productId) {
+    public void removeProductFromCart(Integer userId, Integer productId) {
 
-        val shoppingCart = getShoppingCart(userId);
+        val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
 
         val stockProduct = getProduct(productId);
 
         val item = shoppingCart.getProducts().stream()
-                .filter(product -> product.getProductId().equals(productId))
+                .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Product not found in cart"));
-
 
         productRepository.updateProduct(productId, Product.builder()
                 .name(stockProduct.getName())
@@ -66,19 +58,19 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
                 .stock(stockProduct.getStock() + item.getQuantity())
                 .build());
 
-        shoppingCart.getProducts().removeIf(product -> product.getProductId().equals(productId));
+        shoppingCart.getProducts().removeIf(cartItem -> cartItem.getProduct().getId().equals(productId));
 
     }
 
     @Override
-    public void updateProductQuantity(String userId, Integer productId, Integer newQuantity) {
+    public void updateProductQuantity(Integer userId, Integer productId, Integer newQuantity) {
 
-        val shoppingCart = getShoppingCart(userId);
+        val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
 
         val stockProduct = getProduct(productId);
 
         val item = shoppingCart.getProducts().stream()
-                .filter(product -> product.getProductId().equals(productId))
+                .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Product not found in cart"));
 
@@ -98,23 +90,23 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
     }
 
     @Override
-    public void viewCart(String userId) {
-        val shoppingCart = getShoppingCart(userId);
+    public void viewCart(Integer userId) {
+        val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
 
-        shoppingCart.getProducts().forEach(product -> {
-            val productInfo = getProduct(product.getProductId());
-            System.out.println("Product: " + productInfo.getName() + " Quantity: " + product.getQuantity());
+        shoppingCart.getProducts().forEach(cartItem -> {
+            val productInfo = getProduct(cartItem.getProduct().getId());
+            System.out.println("Product: " + productInfo.getName() + " Quantity: " + cartItem.getQuantity());
         });
 
     }
 
     @Override
-    public Integer checkout(String userId) {
+    public Integer checkout(Integer userId) {
 
-        val shoppingCart = getShoppingCart(userId);
+        val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
 
         val subTotal = shoppingCart.getProducts().stream().reduce(0.00, (acc, cartItem) -> {
-            val productInfo = getProduct(cartItem.getProductId());
+            val productInfo = getProduct(cartItem.getProduct().getId());
             return acc + (productInfo.getPrice() * cartItem.getQuantity());
         }, Double::sum);
 
@@ -129,26 +121,9 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
 
     }
 
-    private ShoppingCart getShoppingCart(String userId) {
-        return shoppingCarts.stream()
-                .filter(cart -> cart.getUserId().equals(userId))
-                .findFirst()
-                .orElseGet(() -> {
-                    ShoppingCart newCart = ShoppingCart.builder()
-                            .userId(userId)
-                            .products(new ArrayList<>())
-                            .taxes(List.of(PlatformService
-                                    .builder()
-                                    .build()))
-                            .build();
-                    shoppingCarts.add(newCart);
-                    return newCart;
-                });
-    }
-
     private Product getProduct(Integer productId) {
         return productRepository.getProducts().stream()
-                .filter(p -> p.getId().equals(productId))
+                .filter(product -> product.getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }

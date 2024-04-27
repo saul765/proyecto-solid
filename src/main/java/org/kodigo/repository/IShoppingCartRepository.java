@@ -1,14 +1,14 @@
 package org.kodigo.repository;
 
+import org.kodigo.domain.Product;
+import org.kodigo.domain.ShoppingCart;
+
 public interface IShoppingCartRepository {
 
-    void addProductToCart(Integer productId, Integer quantity);
+    ShoppingCart getShoppingCart(Integer userId);
 
-    void removeProductFromCart(Integer productId);
+    void addProductToCart(Integer userId, Product product, Integer quantity);
 
-    void updateProductQuantity(Integer productId, Integer quantity);
+    void removeProductFromCart(Integer userId, Integer productId);
 
-    void viewCart();
-
-    void checkout();
 }

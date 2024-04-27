@@ -1,14 +1,14 @@
 package org.kodigo.service;
 
 public interface IShoppingCartService {
-    void addProductToCart(String userId, Integer productId, Integer quantity);
+    void addProductToCart(Integer userId, Integer productId, Integer quantity);
 
-    void removeProductFromCart(String userId, Integer productId);
+    void removeProductFromCart(Integer userId, Integer productId);
 
-    void updateProductQuantity(String userId, Integer productId, Integer newQuantity);
+    void updateProductQuantity(Integer userId, Integer productId, Integer newQuantity);
 
-    void viewCart(String userId);
+    void viewCart(Integer userId);
 
-    Integer checkout(String userId);
+    Integer checkout(Integer userId);
 
 }

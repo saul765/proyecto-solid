@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class ShoppingCartItem {
 
-    private Integer productId;
+    private Product product;
 
     private Integer quantity;
 }
