@@ -7,7 +7,7 @@ import java.util.List;
 
 public class CategoryRepositoryImpl implements ICategoryRepository {
 
-    private final ArrayList<Category> categories = new ArrayList<>(mockCaterogies());
+    private final ArrayList<Category> categories = new ArrayList<>(mockCategories());
 
     @Override
     public List<Category> getAll() {
@@ -32,48 +32,37 @@ public class CategoryRepositoryImpl implements ICategoryRepository {
 
     @Override
     public void createCategory(Category category) {
-        categories.stream().filter(c -> c.getName().equals(category.getName()))
-                .findFirst()
-                .ifPresent(c -> {
-                    throw new IllegalArgumentException("Category already exists");
-                });
         categories.add(category);
     }
 
     @Override
     public void updateCategory(Category category) {
-
-        Category searchCategory = categories.stream()
-                .filter(p -> p.getId().equals(category.getId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-
-        boolean isRemoved = categories.remove(searchCategory);
-
-        if (!isRemoved) {
-            throw new IllegalArgumentException("Product not found");
-        } else {
-            categories.add(category);
-        }
-
+        categories.add(category);
     }
 
     @Override
     public void deleteCategory(Integer categoryId) {
-
-        boolean isRemoved = categories.removeIf(p -> p.getId().equals(categoryId));
-
-        if (!isRemoved) {
-            throw new IllegalArgumentException("Category not found");
-        }
+        categories.removeIf(p -> p.getId().equals(categoryId));
     }
 
-    private List<Category> mockCaterogies() {
+    private List<Category> mockCategories() {
         return List.of(
-                Category.builder().name("Electronics").build(),
-                Category.builder().name("Clothing").build(),
-                Category.builder().name("Books").build(),
-                Category.builder().name("Home").build()
+                Category.builder()
+                        .name("Electronics")
+                        .description("Electronic products")
+                        .build(),
+                Category.builder()
+                        .name("Clothing")
+                        .description("Clothing products")
+                        .build(),
+                Category.builder()
+                        .name("Books")
+                        .description("Books products")
+                        .build(),
+                Category.builder()
+                        .name("Home")
+                        .description("Home products")
+                        .build()
         );
     }
 }

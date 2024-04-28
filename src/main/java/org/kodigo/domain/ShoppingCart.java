@@ -1,9 +1,6 @@
 package org.kodigo.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.kodigo.sequence.ShoppingCartSequence;
 
 import java.util.ArrayList;
@@ -11,6 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class ShoppingCart {
 
     @Setter(value = AccessLevel.NONE)
@@ -30,7 +28,9 @@ public class ShoppingCart {
     private ShoppingCart(Integer userId) {
         this.id = ShoppingCartSequence.getInstance().getNextId();
         this.userId = userId;
-        this.products = new ArrayList<>();
+        this.products = new ArrayList<>(List.of());
+        this.subTotalWithTaxes = 0.0;
+        this.subTotal = 0.0;
         this.taxes = List.of();
     }
 }

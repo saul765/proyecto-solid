@@ -1,13 +1,11 @@
 package org.kodigo.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.kodigo.sequence.UserSequence;
 
 @Getter
 @Setter
+@ToString
 public class User {
 
     @Setter(value = AccessLevel.NONE)

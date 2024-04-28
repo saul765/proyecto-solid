@@ -3,6 +3,7 @@ package org.kodigo.service;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.kodigo.domain.Product;
+import org.kodigo.domain.ShoppingCart;
 import org.kodigo.domain.ShoppingCartItem;
 import org.kodigo.repository.IProductRepository;
 import org.kodigo.repository.IShoppingCartRepository;
@@ -33,6 +34,16 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
 
         product.setStock(product.getStock() - quantity);
 
+        val subTotal = shoppingCart.getProducts().stream().reduce(0.00, (acc, cartItem) -> {
+            val productInfo = getProduct(cartItem.getProduct().getId());
+            return acc + (productInfo.getPrice() * cartItem.getQuantity());
+        }, Double::sum);
+
+        val subTotalWithTaxes = shoppingCart.getTaxes().stream()
+                .reduce(0.00, (acc, tax) -> acc + (subTotal + tax.getTax()), Double::sum) + subTotal;
+
+        shoppingCart.setSubTotal(subTotal);
+        shoppingCart.setSubTotalWithTaxes(subTotalWithTaxes);
     }
 
     @Override
@@ -83,14 +94,8 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
     }
 
     @Override
-    public void viewCart(Integer userId) {
-        val shoppingCart = shoppingCartRepository.getShoppingCart(userId);
-
-        shoppingCart.getProducts().forEach(cartItem -> {
-            val productInfo = getProduct(cartItem.getProduct().getId());
-            System.out.println("Product: " + productInfo.getName() + " Quantity: " + cartItem.getQuantity());
-        });
-
+    public ShoppingCart getCart(Integer userId) {
+        return shoppingCartRepository.getShoppingCart(userId);
     }
 
     @Override
@@ -106,7 +111,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
         shoppingCart.setSubTotal(subTotal);
 
         val subTotalWithTaxes = shoppingCart.getTaxes().stream()
-                .reduce(0.00, (acc, tax) -> acc + (subTotal + tax.getTax()), Double::sum);
+                .reduce(0.00, (acc, tax) -> acc + (subTotal + tax.getTax()), Double::sum) + subTotal;
 
         shoppingCart.setSubTotalWithTaxes(subTotalWithTaxes);
 

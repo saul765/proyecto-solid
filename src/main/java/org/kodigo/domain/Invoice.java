@@ -1,14 +1,15 @@
 package org.kodigo.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@Builder
+@Setter
+@Getter
+@ToString
 public class Invoice {
 
+    @Setter(AccessLevel.NONE)
     private Integer id;
 
     private List<Product> products;
@@ -21,4 +22,12 @@ public class Invoice {
 
     private Double total;
 
+    @Builder
+    public Invoice(List<Product> products, Double subTotal, List<Double> taxes, Double shippingCost, Double total) {
+        this.products = products;
+        this.subTotal = subTotal;
+        this.taxes = taxes;
+        this.shippingCost = shippingCost;
+        this.total = total;
+    }
 }

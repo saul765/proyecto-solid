@@ -1,9 +1,6 @@
 package org.kodigo.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 import org.kodigo.sequence.ProductSequence;
 
 @Data
@@ -30,5 +27,13 @@ public class Product {
         this.price = price;
         this.stock = stock;
         this.category = category;
+    }
+
+    @Override
+    public String toString() {
+        return
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

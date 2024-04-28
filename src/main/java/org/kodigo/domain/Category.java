@@ -1,12 +1,11 @@
 package org.kodigo.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 import org.kodigo.sequence.CategorySequence;
 
-@Data
+@Setter
+@Getter
+@ToString
 public class Category {
 
     @Setter(AccessLevel.NONE)

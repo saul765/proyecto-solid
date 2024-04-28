@@ -1,10 +1,6 @@
 package org.kodigo.domain;
 
-import lombok.Builder;
-
-@Builder
 public class PlatformService extends Tax {
-
 
     private static final String NAME = "PLATFORM_SERVICE";
 
